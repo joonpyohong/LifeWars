@@ -1,6 +1,6 @@
 
 
-#include "gameLogic.h"
+#include "game.h"
 
 void initializeBoard(char *fileName_1, char *fileName_2, gameBoard *board) {
     FILE *files[2];
@@ -11,7 +11,7 @@ void initializeBoard(char *fileName_1, char *fileName_2, gameBoard *board) {
     openFile(fileName_2, &files[1]);
 
     do {
-        resetCurrentState(board);
+        memset(board->currentState, NO_LIFE, WIDTH * HEIGHT);
 
         for (i = 0; i < 2; i ++) {
             randCoordinates(&origin[i][0], &origin[i][1]);
@@ -28,9 +28,9 @@ void updateBoard(gameBoard *board) {
 
     memcpy(board->prevState, board->currentState, WIDTH * HEIGHT * sizeof(char));
 
-    for (i = 0; i < HEIGHT; i++) {
-        for (j = 0; j < WIDTH; j++) {
-            updateCell(board, j, i);
+    for (i = 0; i < WIDTH; i++) {
+        for (j = 0; j < HEIGHT; j++) {
+            updateCell(board, i, j);
         }
     }
 }
@@ -90,7 +90,7 @@ void getNumNeighbors(char *boardState, int x, int y, int *total, int *player_1, 
 void initializeScore(gameScore *score) {
     int i;
 
-    for (i = 0; i < ROUNDS; i++) {
+    for (i = 0; i < GAMES; i++) {
         score->roundScore[0][i] = 0;
         score->roundScore[1][i] = 0;
     }
@@ -99,7 +99,7 @@ void initializeScore(gameScore *score) {
     score->totalScore[1] = 0;
 }
 
-void calculateRoundScore(gameScore *score, gameBoard *board, int roundNum) {
+void calculateGameScore(gameScore *score, gameBoard *board, int roundNum) {
     int i, j;
     char symbol;
 
@@ -117,10 +117,8 @@ void calculateRoundScore(gameScore *score, gameBoard *board, int roundNum) {
     score->totalScore[1] += score->roundScore[1][roundNum];
 }
 
-void printRoundResult(gameScore *score, int roundNum) {
-    int winner;
-
-    winner = determineWinner(score->roundScore[0][roundNum], score->roundScore[1][roundNum]);
+void printGameResult(gameScore *score, int roundNum) {
+    int winner = determineWinner(score->roundScore[0][roundNum], score->roundScore[1][roundNum]);
 
     if (winner == -1) {
         printf("%8d%8d%8d    Draw\n", roundNum, score->roundScore[0][roundNum], score->roundScore[1][roundNum]);
@@ -129,34 +127,21 @@ void printRoundResult(gameScore *score, int roundNum) {
     }
 }
 
-void printGameResult(gameScore *score) {
-    int winner;
-
-    winner = determineWinner(score->totalScore[0], score->totalScore[1]);
+void printFinalResult(gameScore *score) {
+    int winner = determineWinner(score->totalScore[0], score->totalScore[1]);
 
     if (winner == -1) {
-        printf("Game ended in a draw\n");
+        printf("Games ended in a draw\n");
     } else {
         printf("Player %d wins by %d cells to %d cells\n", winner + 1, score->totalScore[winner], score->totalScore[!winner]);
     }
 }
 
 int determineWinner(int score_P1, int score_P2) {
-    int winner;
-
-    if (score_P1 > score_P2) {
-        winner = 0;
-    }
-
-    if (score_P1 < score_P2) {
-        winner = 1;
-    }
-
     if (score_P1 == score_P2) {
-        winner = -1;
+        return -1;
     }
 
-    return winner;
+    return score_P1 > score_P2 ? 0 : 1;
 }
-
 

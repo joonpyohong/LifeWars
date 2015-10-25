@@ -5,7 +5,7 @@
 void openFile(char *fileName, FILE **file) {
     if ((*file = fopen(fileName, "r")) == NULL) {
         fprintf(stderr, "ERROR: cannot open file %s\n", fileName);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 }
 
@@ -15,7 +15,7 @@ void createBoard(gameBoard *board) {
 
     if (board->currentState == NULL || board->prevState == NULL) {
         fprintf(stderr, "ERROR: memory allocation error\n");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 }
 
@@ -24,19 +24,15 @@ void destroyBoard(gameBoard *board) {
     free(board->prevState);
 }
 
-void resetCurrentState(gameBoard *board) {
-    int i;
-
-    for (i = 0; i < WIDTH * HEIGHT; i++) {
-        board->currentState[i] = NO_LIFE;
-    }
-}
-
+/*
+Loads the starting coordinates for a player onto the board.
+Returns 0 on success, 1 if a space is already occupied.
+*/
 int loadStateFromFile(gameBoard *board, FILE *file, int x0, int y0, char player) {
-    char line[64] = {'\0'};
+    char line[16];
     int x, y, newX, newY, idx;
 
-    fgets(line, 64, file);
+    fgets(line, 16, file);
 
     while (fscanf(file, "%d %d", &x, &y) != EOF) {
         newX = wrapCoordinate(x0 + x, WIDTH);
@@ -53,26 +49,8 @@ int loadStateFromFile(gameBoard *board, FILE *file, int x0, int y0, char player)
     return 0;
 }
 
-void printBoard(gameBoard *board) {
-    int i;
-
-    for (i = 0; i < WIDTH * HEIGHT; i++) {
-        printf("%c ", board->currentState[i]);
-
-        if ((i + 1) % WIDTH == 0) {
-            printf("\n");
-        }
-    }
-
-    printf("\n");
-}
-
 int wrapCoordinate(int val, int max) {
-    if (val < 0) {
-        return (max + val) % max;
-    }
-
-    return val % max;
+    return val < 0 ? ((max + val) % max) : (val % max);
 }
 
 void randCoordinates(int *x, int *y) {

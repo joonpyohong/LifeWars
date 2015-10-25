@@ -2,12 +2,12 @@
 
 #include "board.h"
 
-#define ITERATIONS      5000
-#define ROUNDS          50
+#define GAMES           50
+#define GENERATIONS     5000
 
 typedef struct gameScore
 {
-    unsigned int roundScore[2][ROUNDS];
+    unsigned int roundScore[2][GAMES];
     unsigned int totalScore[2];
 } gameScore;
 
@@ -21,11 +21,11 @@ void getNumNeighbors(char *boardState, int x, int y, int *total, int *player_1, 
 
 void initializeScore(gameScore *score);
 
-void calculateRoundScore(gameScore *score, gameBoard *board, int round);
+void calculateGameScore(gameScore *score, gameBoard *board, int round);
 
-void printRoundResult(gameScore *score, int roundNum);
+void printGameResult(gameScore *score, int roundNum);
 
-void printGameResult(gameScore *score);
+void printFinalResult(gameScore *score);
 
 int determineWinner(int score_P1, int score_P2);
 

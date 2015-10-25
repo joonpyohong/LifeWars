@@ -1,11 +1,11 @@
 
 
-CC = clang
+CC = gcc
 CFLAGS = -Wall -Wextra -pedantic -Wfloat-equal -std=c90
 LIBS = -lm
 SRC_PATH = ./src/
 INCLUDE_PATH = -I./include/
-SOURCE = $(SRC_PATH)lifewar.c $(SRC_PATH)gameLogic.c $(SRC_PATH)board.c
+SOURCE = $(SRC_PATH)lifewar.c $(SRC_PATH)game.c $(SRC_PATH)board.c
 EXECUTABLE = .\bin\lifewar.exe
 
 LIF_FILE_1 = .\lif\goosegun.lif

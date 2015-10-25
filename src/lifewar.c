@@ -1,6 +1,6 @@
 
 
-#include "gameLogic.h"
+#include "game.h"
 
 int main(int argc, char **argv) {
     gameBoard board;
@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 
     if (argc != 3) {
         fprintf(stderr, "ERROR: Wrong number of arguments passed to main()\n");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     fileName[0] = argv[1];
@@ -20,18 +20,18 @@ int main(int argc, char **argv) {
     createBoard(&board);
     srand(time(NULL));
 
-    for (i = 0; i < ROUNDS; i++) {
+    for (i = 0; i < GAMES; i++) {
         initializeBoard(fileName[0], fileName[1], &board);
 
-        for (j = 0; j < ITERATIONS; j++) {
+        for (j = 0; j < GENERATIONS; j++) {
             updateBoard(&board);
         }
 
-        calculateRoundScore(&score, &board, i);
-        printRoundResult(&score, i);
+        calculateGameScore(&score, &board, i);
+        printGameResult(&score, i);
     }
 
-    printGameResult(&score);
+    printFinalResult(&score);
     destroyBoard(&board);
     
     return 0;
